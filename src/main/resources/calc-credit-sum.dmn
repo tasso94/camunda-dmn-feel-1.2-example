@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/1.0" id="Definitions_1dqmri3" name="Calculate Credit Sum" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="3.7.0">
+  <decision id="calc-credit-sum" name="Calculate Max Grantable Credit Sum">
+    <extensionElements>
+      <biodi:bounds x="190" y="80" width="180" height="80" />
+      <biodi:edge source="calc-key-figures">
+        <biodi:waypoints x="280" y="230" />
+        <biodi:waypoints x="280" y="160" />
+      </biodi:edge>
+      <biodi:edge source="InputData_1w8l0ht">
+        <biodi:waypoints x="495" y="398" />
+        <biodi:waypoints x="370" y="113" />
+      </biodi:edge>
+    </extensionElements>
+    <informationRequirement>
+      <requiredDecision href="#calc-key-figures" />
+    </informationRequirement>
+    <informationRequirement>
+      <requiredInput href="#InputData_1w8l0ht" />
+    </informationRequirement>
+    <decisionTable id="decisionTable_1">
+      <input id="InputClause_192h5l5">
+        <inputExpression id="InputExpression_1xbphe6" typeRef="integer">
+          <text>credit_score</text>
+        </inputExpression>
+      </input>
+      <output id="output_1" name="max_sum" typeRef="double" />
+      <rule id="DecisionRule_0yjwry3">
+        <description>Poor</description>
+        <inputEntry id="UnaryTests_095nb8j" expressionLanguage="feel">
+          <text>&lt; (key_figures.avg_score*.8)</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_0921mg1" expressionLanguage="">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1db4903">
+        <description>Fair</description>
+        <inputEntry id="UnaryTests_0hn1sd3" expressionLanguage="feel">
+          <text>(? between (key_figures.avg_score*.8) and key_figures.avg_score)</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_0657sqf" expressionLanguage="feel">
+          <text>key_figures.avg_granted_sum</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1txmb4b">
+        <description>Good</description>
+        <inputEntry id="UnaryTests_0rel7zw" expressionLanguage="feel">
+          <text>&gt; key_figures.avg_score</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_0s30qvs" expressionLanguage="">
+          <text>key_figures.avg_granted_sum*1.5</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="calc-key-figures" name="Calculate Credit History &#10;Key Figures">
+    <extensionElements>
+      <biodi:bounds x="190" y="230" width="180" height="80" />
+      <biodi:edge source="InputData_182i5p7">
+        <biodi:waypoints x="345" y="399" />
+        <biodi:waypoints x="321" y="310" />
+      </biodi:edge>
+      <biodi:edge source="InputData_0c1i4vw">
+        <biodi:waypoints x="205" y="398" />
+        <biodi:waypoints x="240" y="310" />
+      </biodi:edge>
+    </extensionElements>
+    <variable id="InformationItem_16bvetr" name="key_figures" />
+    <informationRequirement>
+      <requiredInput href="#InputData_0c1i4vw" />
+    </informationRequirement>
+    <informationRequirement>
+      <requiredInput href="#InputData_182i5p7" />
+    </informationRequirement>
+    <literalExpression id="LiteralExpression_1g058p4" expressionLanguage="FEEL">
+      <text>{
+  avg_score:       mean(credit_history[type = credit_type].score),
+  avg_granted_sum: mean(credit_history[type = credit_type].granted_sum)
+}</text>
+    </literalExpression>
+  </decision>
+  <inputData id="InputData_0c1i4vw" name="Customer Credit Type">
+    <extensionElements>
+      <biodi:bounds x="128" y="398" width="125" height="45" />
+    </extensionElements>
+  </inputData>
+  <inputData id="InputData_182i5p7" name="Credit History">
+    <extensionElements>
+      <biodi:bounds x="288" y="399" width="125" height="45" />
+    </extensionElements>
+  </inputData>
+  <inputData id="InputData_1w8l0ht" name="Customer Credit Score">
+    <extensionElements>
+      <biodi:bounds x="447" y="398" width="125" height="45" />
+    </extensionElements>
+  </inputData>
+</definitions>
